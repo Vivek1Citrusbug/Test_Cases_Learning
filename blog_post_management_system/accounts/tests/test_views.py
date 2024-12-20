@@ -7,12 +7,12 @@ from accounts.domain.models import UserProfile
 
 
 class UserRegistrationTestCases(TestCase):
-    def test_user_registration(self):
+    def setUp(self):
         """
-        User registration testing
+        Common setup for user registration tests.
         """
 
-        data = {
+        self.valid_data = {
             "username": "testuser",
             "first_name": "test",
             "last_name": "testlastname",
@@ -20,8 +20,19 @@ class UserRegistrationTestCases(TestCase):
             "password1": "13novembr200@",
             "password2": "13novembr200@",
         }
+        self.invalid_data = {
+            "username": "",
+            "password1": "123",
+            "password2": "12dcsdc3",
+            "email": "invalidemail",
+        }
 
-        response = self.client.post(reverse("user-registration"), data=data)
+    def test_user_registration(self):
+        """
+        User registration testing
+        """
+
+        response = self.client.post(reverse("user-registration"), data=self.valid_data)
         self.assertEqual(response.status_code, 302)
         user = User.objects.get(username="testuser")
         self.assertIsNotNone(user)
@@ -33,14 +44,8 @@ class UserRegistrationTestCases(TestCase):
         Test user registration with invalid data
         this function will work for any typ of user registration form error.
         """
-        invalid_data = {
-            "username": "",
-            "password1": "123",
-            "password2": "12dcsdc3",
-            "email": "invalidemail",
-        }
 
-        response = self.client.post(reverse("user-registration"), data=invalid_data)
+        response = self.client.post(reverse("user-registration"), data=self.invalid_data)
         self.assertEqual(response.status_code, 200)
         form = response.context["form"]
         self.assertTrue(form.errors)
@@ -61,7 +66,6 @@ class UserLoginTestcases(TestCase):
         """
 
         response = self.client.post(reverse("user-login"), self.credentials)
-
         self.assertTrue(response.wsgi_request.user.is_authenticated)
         self.assertRedirects(response, reverse("blog_list"))
 
@@ -82,9 +86,7 @@ class UserLogoutTestCases(TestCase):
         Set up a test user and log them in
         """
 
-        self.user = User.objects.create_user(
-            username="testuser", password="testpassword"
-        )
+        self.user = User.objects.create_user(username="testuser", password="testpassword")
         self.client.login(username="testuser", password="testpassword")
 
     def test_logout_redirect(self):
@@ -108,13 +110,21 @@ class UserProfileDetailTestCases(TestCase):
         self.url = reverse("profile")
 
     def test_redirect_if_not_logged_in(self):
-        """If not logged in """
+        """
+        If not logged in then user will be redirected to login page
+        """
+
+        
         response = self.client.get(self.url)
         print(response)
         self.assertEqual(response.status_code, 302)
         self.assertIn("login", response.url)
 
     def test_view_with_logged_in_user_get_request(self):
+        """
+        If logged in then user will be redirected to edit profile form
+        """
+
         self.client.login(username="testuser", password="testpass")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -122,6 +132,10 @@ class UserProfileDetailTestCases(TestCase):
 
 class UserProfileUpdateTestCases(TestCase):
     def setUp(self):
+        """
+        Setup for user profile updatation.
+        """
+
         self.client = Client()
         self.user = User.objects.create_user(username="testuser", password="testpass")
         self.profile = UserProfile.objects.create(user=self.user)
@@ -129,6 +143,10 @@ class UserProfileUpdateTestCases(TestCase):
         self.data = {"bio": "", "profil_picture": ""}
 
     def test_redirect_if_not_logged_in(self):
+        """
+        If not logged in then user will be redirected to login page
+        """
+
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
         print(response.url)
@@ -142,6 +160,10 @@ class UserProfileUpdateTestCases(TestCase):
         self.assertIn("edit", response.url)
 
     def test_successful_post_request(self):
+        """
+        If logged in then user will be redirected to profile page after successfully updating profile
+        """
+
         self.client.login(username=self.user.username, password=self.user.password)
         response = self.client.post(self.url, self.data)
         self.assertEqual(response.status_code, 302)
