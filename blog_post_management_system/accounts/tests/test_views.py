@@ -7,6 +7,7 @@ from accounts.domain.models import UserProfile
 
 
 class UserRegistrationTestCases(TestCase):
+
     def setUp(self):
         """
         Common setup for user registration tests.
@@ -45,13 +46,16 @@ class UserRegistrationTestCases(TestCase):
         this function will work for any typ of user registration form error.
         """
 
-        response = self.client.post(reverse("user-registration"), data=self.invalid_data)
+        response = self.client.post(
+            reverse("user-registration"), data=self.invalid_data
+        )
         self.assertEqual(response.status_code, 200)
         form = response.context["form"]
         self.assertTrue(form.errors)
 
 
 class UserLoginTestcases(TestCase):
+
     def setUp(self):
         """
         Create a user for testing login functionality
@@ -86,7 +90,9 @@ class UserLogoutTestCases(TestCase):
         Set up a test user and log them in
         """
 
-        self.user = User.objects.create_user(username="testuser", password="testpassword")
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword"
+        )
         self.client.login(username="testuser", password="testpassword")
 
     def test_logout_redirect(self):
@@ -99,6 +105,7 @@ class UserLogoutTestCases(TestCase):
 
 
 class UserProfileDetailTestCases(TestCase):
+
     def setUp(self):
         """
         Setup for user profile detail view
@@ -114,7 +121,6 @@ class UserProfileDetailTestCases(TestCase):
         If not logged in then user will be redirected to login page
         """
 
-        
         response = self.client.get(self.url)
         print(response)
         self.assertEqual(response.status_code, 302)
@@ -131,6 +137,7 @@ class UserProfileDetailTestCases(TestCase):
 
 
 class UserProfileUpdateTestCases(TestCase):
+
     def setUp(self):
         """
         Setup for user profile updatation.
