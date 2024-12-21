@@ -21,7 +21,6 @@ class BlogPostListingView(LoginRequiredMixin, ListView):
     template_name = "blogs/blog_list.html"
     context_object_name = "posts"
     model: BlogPost
-    ordering = ["-date_published"]
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -45,6 +44,8 @@ class BlogDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         post = self.get_object()
+        if not post:
+            raise Http404("Post not found.")
         context["likes_count"] = post.likes.count()
         context["user_liked"] = post.likes.filter(user=self.request.user).exists()
         return context

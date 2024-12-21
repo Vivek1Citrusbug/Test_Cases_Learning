@@ -10,9 +10,11 @@ from django.core.validators import EmailValidator
 
 # - Create/Register a user (Model Form)
 class CreateUserForm(UserCreationForm):
-    email = forms.EmailField(
-        validators=[EmailValidator(message="Invalid email address.")]
-    )
+    """
+    User creation form for user.
+    """
+
+    email = forms.EmailField(required=True)
     first_name = forms.CharField(max_length=20, required=True)
     last_name = forms.CharField(max_length=20, required=True)
 
@@ -39,11 +41,21 @@ class CreateUserForm(UserCreationForm):
 
 # Authenticate a user (Model form)
 class LoginForm(AuthenticationForm):
+    """
+    Login form of user
+    """
+
     username = forms.CharField(widget=TextInput(), required=True)
     password = forms.CharField(widget=PasswordInput(), required=True)
 
 
 class UserProfileForm(forms.ModelForm):
+    """
+    Only update bio and user profil picture of user
+    """
+
+    bio = forms.CharField(max_length=50, required=False)
+
     class Meta:
         model = UserProfile
         fields = ["bio", "profile_picture"]

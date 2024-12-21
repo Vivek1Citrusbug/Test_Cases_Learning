@@ -11,7 +11,7 @@ class BlogPostForm(forms.ModelForm):
         fields = ["title", "content"]
 
     title = forms.CharField(
-        max_length=200,
+        max_length=255,
         required=True,
         widget=forms.TextInput(attrs={"class": "form-control"}),
         error_messages={

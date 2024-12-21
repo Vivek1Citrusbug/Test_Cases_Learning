@@ -24,6 +24,11 @@
                             <div class="mb-3">
                                 <label for="id_bio" class="form-label">Bio</label>
                                 <textarea class="form-control" id="id_bio" name="bio" rows="3" >{{ form.bio.value|default_if_none:"" }}</textarea>
+                                {% if form.bio.errors %}
+                                    <ul>
+                                        {% for error in form.bio.errors %}<li class="text-danger">{{ error }}</li>{% endfor %}
+                                    </ul>
+                                {% endif %}
                             </div>
                             <div class="mb-3">
                                 <label for="id_profile_picture" class="form-label">Profile Picture</label>
