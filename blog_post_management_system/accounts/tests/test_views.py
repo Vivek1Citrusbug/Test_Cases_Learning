@@ -122,7 +122,6 @@ class UserProfileDetailTestCases(TestCase):
         """
 
         response = self.client.get(self.url)
-        print(response)
         self.assertEqual(response.status_code, 302)
         self.assertIn("login", response.url)
 
@@ -156,13 +155,11 @@ class UserProfileUpdateTestCases(TestCase):
 
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
-        print(response.url)
         self.assertIn("login", response.url)
 
     def test_view_with_logged_in_user_get_request(self):
         self.client.login(username=self.user.username, password=self.user.password)
         response = self.client.get(self.url)
-        print(response.url)
         self.assertEqual(response.status_code, 302)
         self.assertIn("edit", response.url)
 
